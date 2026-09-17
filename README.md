@@ -1,0 +1,5 @@
+This REPO contains several improvements from https://github.com/M-An0s/HWPE-integration-in-Pulpissimo-for-6G-Algorithms
+original implementation. Most importantly a bug in the interface protocol has be fixed and the HWPE can now 
+be triggered continuously without FIFO stream leftover errors.Further more, a pipe line has been implemented raising the 
+original frequency. The tb-hwpe.c module contains experiments measuring the efficiency of offloading 4x4tiles to the HWPE 
+and doing the assembling the result using the RiscV core.
