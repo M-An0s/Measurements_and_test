@@ -1,0 +1,35 @@
+hw-mac-engine:
+  incdirs : [
+    rtl
+  ]
+  files : [
+    rtl/mac_package.sv,
+    rtl/mac_fsm.sv,
+    rtl/mac_ctrl.sv,
+    rtl/mac_streamer.sv,
+    rtl/cont_mul_16s_32s_47_1_1.v,
+    rtl/cont_mul_32s_16s_47_1_1.v,
+    rtl/cont_mul_32s_32s_39_1_1.v,
+    rtl/cont_mul_32s_32s_47_1_1.v,
+    rtl/cont_mul_32s_32s_64_1_1.v,
+    rtl/cont_mul_33s_32s_39_1_1.v,
+    rtl/cont_mul_33s_32s_47_1_1.v,
+    rtl/cont_mul_33s_32s_64_1_1.v,
+    rtl/cont_mul_33s_33s_64_1_1.v,
+    rtl/cont_mul_64s_64s_64_1_1.v,
+    rtl/cont_mux_43_32_1_1.v,
+    rtl/cont_mux_83_32_1_1.v,
+    rtl/cont_mux_84_32_1_1.v,
+    rtl/cont_mux_164_32_1_1.v,
+    rtl/cont_mux_164_33_1_1.v,
+    rtl/cont_mux_164_49_1_1.v,
+    rtl/cont_mux_164_50_1_1.v,
+    rtl/cont.v,
+    rtl/mac_top.sv,
+    wrap/mac_top_wrap.sv
+  ]
+  vlog_opts : [
+    "-L hwpe_ctrl_lib",
+    "-L hwpe_stream_lib"
+  ]
+
