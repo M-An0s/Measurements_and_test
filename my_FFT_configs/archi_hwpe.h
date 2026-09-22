@@ -92,5 +92,6 @@
 #define HWPE_SHIFT_SIMPLEMUL 0x58
 #define HWPE_VECTSTRIDE      0x5c
 #define HWPE_VECTSTRIDE2     0x60
+#define FFT_STRIDE           0x64
 
 #endif

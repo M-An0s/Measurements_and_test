@@ -152,6 +152,9 @@ static inline void hwpe_cg_enable() {
 static inline void hwpe_cg_disable() {
   return;
 }
+static inline void hwpe_stride(unsigned int value) {
+  HWPE_WRITE(value, FFT_STRIDE);
+}
 
 #endif /* __HAL_HWPE_H__ */
 
