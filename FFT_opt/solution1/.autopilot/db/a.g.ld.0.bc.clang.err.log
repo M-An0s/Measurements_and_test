@@ -1,0 +1,11 @@
+remark: FFT_opt/FFT.cpp:61:0: Disaggregating variable 'a_i'
+remark: FFT_opt/FFT.cpp:61:0: Disaggregating variable 'b_i'
+remark: FFT_opt/FFT.cpp:61:0: Disaggregating variable 'c_i'
+remark: FFT_opt/FFT.cpp:61:0: Disaggregating variable 'd_o'
+remark: FFT_opt/FFT.cpp:61:0: Inlining function 'rev3(ap_uint<3>)' into 'cont(hs_is_t*, hs_is_t*, hs_is_t*, hs_is_t*, bool, bool, bool, bool, ap_uint<5>, ap_uint<11>, ap_uint<11>*, bool*)'
+remark: FFT_opt/FFT.cpp:61:0: Inlining function 'mul_pip(ap_int<64>, ap_int<64>, State, ap_int<64>*)' into 'cont(hs_is_t*, hs_is_t*, hs_is_t*, hs_is_t*, bool, bool, bool, bool, ap_uint<5>, ap_uint<11>, ap_uint<11>*, bool*)'
+remark: FFT_opt/FFT.cpp:99:0: Applying array_partition to '_ZZ4contP7hs_is_tS0_S0_S0_bbbb7ap_uintILi5EES1_ILi11EEPS3_PbE5res_a': Complete partitioning on dimension 1.
+remark: FFT_opt/FFT.cpp:101:0: Applying array_partition to '_ZZ4contP7hs_is_tS0_S0_S0_bbbb7ap_uintILi5EES1_ILi11EEPS3_PbE5res_b': Complete partitioning on dimension 1.
+remark: FFT_opt/FFT.cpp:103:0: Applying array_partition to '_ZZ4contP7hs_is_tS0_S0_S0_bbbb7ap_uintILi5EES1_ILi11EEPS3_PbE8buffer_a': Complete partitioning on dimension 1.
+remark: FFT_opt/FFT.cpp:105:0: Applying array_partition to '_ZZ4contP7hs_is_tS0_S0_S0_bbbb7ap_uintILi5EES1_ILi11EEPS3_PbE8buffer_b': Complete partitioning on dimension 1.
+remark: FFT_opt/FFT.cpp:107:0: Applying array_partition to '_ZZ4contP7hs_is_tS0_S0_S0_bbbb7ap_uintILi5EES1_ILi11EEPS3_PbE8buffer_c': Complete partitioning on dimension 1.

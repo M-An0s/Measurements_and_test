@@ -1,0 +1,25 @@
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:31822:7: warning: Added loop label VITIS_LOOP_1211_1:   [xilinx-label-all-loops]
+      for (i = 0; i < __N - 1; ++i) {
+      ^~~
+      VITIS_LOOP_1211_1: 
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:31822:7: note: FIX-IT applied suggested code changes
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32796:5: warning: Added loop label VITIS_LOOP_676_1:   [xilinx-label-all-loops]
+    for (unsigned i = low; i != high; ++i) {
+    ^~~
+    VITIS_LOOP_676_1: 
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32796:5: note: FIX-IT applied suggested code changes
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32810:5: warning: Added loop label VITIS_LOOP_690_1:   [xilinx-label-all-loops]
+    for (unsigned i = low; i != high; ++i) {
+    ^~~
+    VITIS_LOOP_690_1: 
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32810:5: note: FIX-IT applied suggested code changes
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32824:5: warning: Added loop label VITIS_LOOP_704_1:   [xilinx-label-all-loops]
+    for (unsigned i = low; i != high; ++i) {
+    ^~~
+    VITIS_LOOP_704_1: 
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:32824:5: note: FIX-IT applied suggested code changes
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:34435:7: warning: Added loop label VITIS_LOOP_1245_1:   [xilinx-label-all-loops]
+      for (i = 0; i < __N - 1; ++i) {
+      ^~~
+      VITIS_LOOP_1245_1: 
+/home/pulp1/originals_measuring/FFT_opt/solution1/.autopilot/db/FFT.pp.0.cpp:34435:7: note: FIX-IT applied suggested code changes

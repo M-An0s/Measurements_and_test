@@ -1,0 +1,4 @@
+FFT_opt/FFT.cpp:167:12: warning: enumeration value 'FFT_CTRL' not handled in switch [-Wswitch]
+    switch(state){
+           ^
+1 warning generated.
