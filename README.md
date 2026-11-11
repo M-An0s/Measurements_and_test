@@ -1,4 +1,4 @@
 - **FFT_opt is the final version of the accelerator**
 
-- This REPO contains several improvements from https://github.com/M-An0s/HWPE-integration-in-Pulpissimo-for-6G-Algorithms original implementation. Most importantly a bug in the interface protocol has be fixed and the HWPE can now be triggered continuously without FIFO stream leftover errors.Further more, a pipe line has been implemented raising the original frequency. The module my-tb.c contains experiments measuring the efficiency of offloading 4x4 or 8x8 tiles to the HWPE and assembling the result using the RiscV core.
+- This REPO contains several improvements from https://github.com/M-An0s/HWPE-integration-in-Pulpissimo-for-6G-Algorithms original implementation. Most importantly, a bug in the interface protocol has been fixed, and the HWPE can now be triggered continuously without FIFO stream leftover errors.Furthermore, a pipeline has been implemented, raising the original frequency. The module my-tb.c contains experiments measuring the efficiency of offloading 4x4 or 8x8 tiles to the HWPE and assembling the result using the RiscV core.
 
