@@ -60,7 +60,7 @@ Compared with the [original implementation](https://github.com/M-An0s/HWPE-integ
 | Path | Contents |
 | --- | --- |
 | `FFT_opt/` | Final HLS source of the accelerator |
-| `FFT/` | [Describe: earlier version?] |
+| `FFT/` | [Describe: earlier version (general FFT controls)] |
 | `my_FFT_configs/` | [Describe: FFT configurations / register settings?] |
 | `my_tb.c` | RISC-V testbench and experiments (tile offloading, golden-vector checks) |
 
