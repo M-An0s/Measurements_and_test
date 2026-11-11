@@ -29,11 +29,55 @@
 #include "inc/hwpe_stimuli_d.h"
 #include "inc/results.h"
 
-#define N 8
-#define T 4
+#define N 32
+#define T 8
+#define LEN T*T-1
 #define Size_T T*T
-#define safe_off 128
+#define tile_it 16
 
+#define word 4
+
+void call_hwpe(int tile,int itr){
+  uint8_t *a = stim_a;
+  uint8_t *b = stim_b;
+  uint8_t *c = stim_c;
+  uint8_t *d = stim_d;
+  int offload_id_tmp, offload_id;
+  int offset =word*tile*itr*Size_T;
+   hwpe_soft_clear();
+    hwpe_bytecode_set(HWPE_LOOPS1_OFFS,           0x00000000);
+  hwpe_bytecode_set(HWPE_BYTECODE5_LOOPS0_OFFS, 0x00040000);
+  hwpe_bytecode_set(HWPE_BYTECODE4_OFFS,        0x00000000);
+  hwpe_bytecode_set(HWPE_BYTECODE3_OFFS,        0x00000000);
+  hwpe_bytecode_set(HWPE_BYTECODE2_OFFS,        0x00000000);
+  hwpe_bytecode_set(HWPE_BYTECODE1_OFFS,        0x000008cd);
+  hwpe_bytecode_set(HWPE_BYTECODE0_OFFS,        0x11a12c05);
+  while((offload_id_tmp = hwpe_acquire_job()) < 0);
+   hwpe_a_addr_set((unsigned int) a+offset);
+  hwpe_b_addr_set((unsigned int) b+offset);
+  hwpe_c_addr_set((unsigned int) c);
+  hwpe_d_addr_set((unsigned int) d+offset); //+4*16
+  hwpe_nb_iter_set(itr);
+  hwpe_len_iter_set(LEN);
+  hwpe_vectstride_set(word*Size_T); //4bytes/word * word_cnt
+  hwpe_shift_simplemul_set(hwpe_shift_simplemul_value(1, 1));
+  hwpe_trigger_job();
+
+}
+void tilling_loop(int lower,int upper){
+   uint8_t *d = stim_d;
+  for(int j=lower;j<upper;j++){  //tile_it => N^2/T^2 for 16,4 => 16
+    int base = j * 4* Size_T;
+    int base_r = j*Size_T;
+    for (int i = 0; i <Size_T; i++) {
+     ((uint32_t *)d)[base_r+i]   = ((uint32_t *)d)[base+i]+
+          ((uint32_t *)d)[base+i + Size_T] +
+          ((uint32_t *)d)[base+ i + 2*Size_T] +
+          ((uint32_t *)d)[base + i + 3*Size_T];
+        
+        }
+  }
+}
 int main() {
   int res_matrix[64];
   uint8_t *a = stim_a;
@@ -47,9 +91,8 @@ int main() {
   int i,j;
   
   int offload_id_tmp, offload_id;
-  int i_tile,j_tile,tile_starting_pos;
+  int tile=0;
   /* convolution-accumulation - HW */
-  
   // enable hwpe
   hwpe_cg_enable();
   while((offload_id_tmp = hwpe_acquire_job()) < 0);
@@ -64,108 +107,37 @@ int main() {
   hwpe_bytecode_set(HWPE_BYTECODE0_OFFS,        0x11a12c05);
   
 
+  
    hwpe_a_addr_set((unsigned int) a);
   hwpe_b_addr_set((unsigned int) b);
   hwpe_c_addr_set((unsigned int) c);
   hwpe_d_addr_set((unsigned int) d); //+4*16
-  hwpe_nb_iter_set(2);
-  hwpe_len_iter_set(15);
-  hwpe_vectstride_set(4*16); //4bytes/word * word_cnt
+  hwpe_nb_iter_set(4); //ITR NUMBER FOR ONE TILE
+  hwpe_len_iter_set(LEN);
+  hwpe_vectstride_set(word*Size_T); //4bytes/word * word_cnt
   hwpe_shift_simplemul_set(hwpe_shift_simplemul_value(1, 1));
   hwpe_trigger_job();
   asm volatile ("wfi" ::: "memory");
-  //NO OVERLAP:
-  /*
-   for(i=0;i<16;i++){
-   ((uint32_t *)d)[i] =  ((uint32_t *) d)[i]+((uint32_t *) d)[i+16];
-  }
-
-   for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+16] =  ((uint32_t *) d)[i+32]+((uint32_t *) d)[i+16+32];
-  }
-  for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+32] =  ((uint32_t *) d)[i+64]+((uint32_t *) d)[i+16+64];
-  }
-  for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+48] =  ((uint32_t *) d)[i+96]+((uint32_t *) d)[i+16+96];}
-  */
-  //OVERLAPED
-  
- hwpe_soft_clear();
-    hwpe_bytecode_set(HWPE_LOOPS1_OFFS,           0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE5_LOOPS0_OFFS, 0x00040000);
-  hwpe_bytecode_set(HWPE_BYTECODE4_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE3_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE2_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE1_OFFS,        0x000008cd);
-  hwpe_bytecode_set(HWPE_BYTECODE0_OFFS,        0x11a12c05);
-  while((offload_id_tmp = hwpe_acquire_job()) < 0);
-   hwpe_a_addr_set((unsigned int) a+4*32);
-  hwpe_b_addr_set((unsigned int) b+4*32);
-  hwpe_c_addr_set((unsigned int) c);
-  hwpe_d_addr_set((unsigned int) d+4*32); //+4*16
-  hwpe_nb_iter_set(2);
-  hwpe_len_iter_set(15);
-  hwpe_vectstride_set(4*16); //4bytes/word * word_cnt
-  hwpe_shift_simplemul_set(hwpe_shift_simplemul_value(1, 1));
-  hwpe_trigger_job();
-   for(i=0;i<16;i++){
-   ((uint32_t *)d)[i] =  ((uint32_t *) d)[i]+((uint32_t *) d)[i+16];
-  }
-  asm volatile ("wfi" ::: "memory");
+   tile ++;
  
-  hwpe_soft_clear();
-    hwpe_bytecode_set(HWPE_LOOPS1_OFFS,           0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE5_LOOPS0_OFFS, 0x00040000);
-  hwpe_bytecode_set(HWPE_BYTECODE4_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE3_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE2_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE1_OFFS,        0x000008cd);
-  hwpe_bytecode_set(HWPE_BYTECODE0_OFFS,        0x11a12c05);
-  while((offload_id_tmp = hwpe_acquire_job()) < 0);
-   hwpe_a_addr_set((unsigned int) a+4*64);
-  hwpe_b_addr_set((unsigned int) b+4*64);
-  hwpe_c_addr_set((unsigned int) c);
-  hwpe_d_addr_set((unsigned int) d+4*64); //+4*16
-  hwpe_nb_iter_set(2);
-  hwpe_len_iter_set(15);
-  hwpe_vectstride_set(4*16); //4bytes/word * word_cnt
-  hwpe_shift_simplemul_set(hwpe_shift_simplemul_value(1, 1));
-  hwpe_trigger_job();
-  for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+16] =  ((uint32_t *) d)[i+32]+((uint32_t *) d)[i+16+32];
-  }
-  asm volatile ("wfi" ::: "memory");
 
-   hwpe_soft_clear();
-    hwpe_bytecode_set(HWPE_LOOPS1_OFFS,           0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE5_LOOPS0_OFFS, 0x00040000);
-  hwpe_bytecode_set(HWPE_BYTECODE4_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE3_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE2_OFFS,        0x00000000);
-  hwpe_bytecode_set(HWPE_BYTECODE1_OFFS,        0x000008cd);
-  hwpe_bytecode_set(HWPE_BYTECODE0_OFFS,        0x11a12c05);
-  while((offload_id_tmp = hwpe_acquire_job()) < 0);
-   hwpe_a_addr_set((unsigned int) a+4*96);
-  hwpe_b_addr_set((unsigned int) b+4*96);
-  hwpe_c_addr_set((unsigned int) c);
-  hwpe_d_addr_set((unsigned int) d+4*96); //+4*16
-  hwpe_nb_iter_set(2);
-  hwpe_len_iter_set(15);
-  hwpe_vectstride_set(4*16); //4bytes/word * word_cnt
-  hwpe_shift_simplemul_set(hwpe_shift_simplemul_value(1, 1));
-  hwpe_trigger_job();
-    for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+32] =  ((uint32_t *) d)[i+64]+((uint32_t *) d)[i+16+64];
-  }
-  asm volatile ("wfi" ::: "memory");
-  
-  
-  for(i=0;i<16;i++){
-   ((uint32_t *)d)[i+48] =  ((uint32_t *) d)[i+96]+((uint32_t *) d)[i+16+96];
-  } 
+  //FOR COMPUTING ALL THE TILES CALL: 
+  // tilling_loop(0,16);
 
-   hwpe_cg_disable();
+  
+  while(tile<16){
+     call_hwpe(tile,4);//4 IS ITR NUMBER FOR 1 TILE
+  
+    tilling_loop((tile-1),tile);
+    asm volatile ("wfi" ::: "memory");
+    tile++;
+  }
+  tilling_loop((tile-1),tile);
+  
+ 
+  hwpe_cg_disable();
+  
+
   //NAIVE LOOP
   /*
  for (int i = 0; i < N; i++) {
@@ -193,8 +165,38 @@ int main() {
 }
 
 
+  //OLD TILES BEFORE THE LOOP
+   /* for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+64] =  ((uint32_t *) d)[i+128]+((uint32_t *) d)[i+64+128];
+  }
+  for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+128] =  ((uint32_t *) d)[i+256]+((uint32_t *) d)[i+64+256];
+  }
+  for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+192] =  ((uint32_t *) d)[i+384]+((uint32_t *) d)[i+64+384];}*/
+   //call tile sequence for the 8x8s
+   /*
 
-
+  call_hwpe(tile,2);
+  for(i=0;i<64;i++){
+   ((uint32_t *)d)[i] =  ((uint32_t *) d)[i]+((uint32_t *) d)[i+64];
+  }
+  asm volatile ("wfi" ::: "memory");
+  tile ++;
+  call_hwpe(tile,2);
+    for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+64] =  ((uint32_t *) d)[i+128]+((uint32_t *) d)[i+64+128];
+  }
+  asm volatile ("wfi" ::: "memory");
+   tile ++;
+  call_hwpe(tile,2);
+  for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+128] =  ((uint32_t *) d)[i+256]+((uint32_t *) d)[i+64+256];
+  }
+  asm volatile ("wfi" ::: "memory");
+  for(i=0;i<64;i++){
+   ((uint32_t *)d)[i+192] =  ((uint32_t *) d)[i+384]+((uint32_t *) d)[i+64+384];}*/
+    
   // OLD TESTS
   /*
   if(((uint32_t *) d)[0] !=0x00000047) errors++;
