@@ -1,9 +1,0 @@
-INFO: [SIM 2] *************** CSIM start ***************
-INFO: [SIM 4] CSIM will launch GCC as the compiler.
-   Compiling ../../../FFT.cpp in debug mode
-   Generating csim.exe
-accepted A=8 B=8  outputs=0  cycles=16
-  only 0 of 16 outputs
-Test failed  !!!  (1 errors)
-ERR: [SIM 100] 'csim_design' failed: nonzero return value.
-INFO: [SIM 3] *************** CSIM finish ***************
